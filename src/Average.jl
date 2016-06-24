@@ -1,7 +1,7 @@
 module Average
 using ValidatedNumerics;
 using Distributions;
-using Interpolations;
+using Dierckx;
 
 function byKnownVariance(average, variance, alpha, length)
     gamma = getGamma(alpha)
@@ -20,8 +20,8 @@ end
 
 function byMeanAbsDeviation(average, values, alpha, length)
     gamma = getGamma(alpha)
-    averageAbsDeviation = mapreduce((x) -> abs(x - average), +, values)
-    quantile_gamma = getMeanAbsDeviation(gamma, length)
+    averageAbsDeviation = mapreduce((x) -> abs(x - average), +, values) / length
+    quantile_gamma = getMeanAbsDeviationQuantile(gamma, length)
     delta = averageAbsDeviation * quantile_gamma
     @interval(average - delta, average + delta)
 end
@@ -31,8 +31,8 @@ function getGamma(alpha)
 end
 
 function getMeanAbsDeviationQuantile(value, length)
-    if value != 0.95 || value != 0.975
-        error("Value not allowes")
+    if value != 0.95 && value != 0.975
+        error("Value=$value is not allowed")
     end
     knots = [
     2 12.71;
@@ -55,8 +55,10 @@ function getMeanAbsDeviationQuantile(value, length)
     60 0.33;
     120 0.23;
     ]
-    itp = interpolate(knots, BSpline(Linear()), OnGrid())
-    itp[length]
+    x_knots = knots[:, 1]
+    y_knots = knots[:, 2]
+    itp = Spline1D(x_knots, y_knots, k=1, bc="extrapolate")
+    evaluate(itp, length)
 end
 
 function studentQuatile(value, freedomDegreeNumber)
