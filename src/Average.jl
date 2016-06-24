@@ -10,16 +10,17 @@ function byKnownVariance(average, variance, alpha, length)
     @interval(average - delta, average + delta)
 end
 
-function byUnknownVariance(average, variance, alpha, length)
+function byUnknownVariance(average, values, alpha, length)
     gamma = getGamma(alpha)
+    variance = mapreduce((x) -> (x - average)^2, +, values) / (length - 1)
     quantile_gamma = studentQuatile(gamma, length - 1)
-    delta = quantile_gamma * sqrt(variance) / sqrt(length37)
+    delta = quantile_gamma * sqrt(variance) / sqrt(length)
     @interval(average - delta, average + delta)
 end
 
 function byMeanAbsDeviation(average, values, alpha, length)
     gamma = getGamma(alpha)
-    averageAbsDeviation = mapreduce((x) -> x - average, +, values)
+    averageAbsDeviation = mapreduce((x) -> abs(x - average), +, values)
     quantile_gamma = getMeanAbsDeviation(gamma, length)
     delta = averageAbsDeviation * quantile_gamma
     @interval(average - delta, average + delta)
@@ -60,7 +61,7 @@ end
 
 function studentQuatile(value, freedomDegreeNumber)
     d = TDist(freedomDegreeNumber)
-    quantile(value)
+    quantile(d, value)
 end
 
 function normalQuantile(value)
