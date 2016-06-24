@@ -22,7 +22,7 @@ function byMeanAbsDeviation(average, values, alpha, length)
     gamma = getGamma(alpha)
     mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values) / length
     quantile_gamma = getMeanAbsDeviationQuantile(gamma, length)
-    delta = average_abs_deviation * quantile_gamma
+    delta = mean_abs_deviation * quantile_gamma
     @interval(average - delta, average + delta)
 end
 

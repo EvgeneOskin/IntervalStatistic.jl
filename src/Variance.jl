@@ -16,17 +16,17 @@ end
 function byMeanAbsoluteDeviation(average, values, alpha, length)
     quantile_down, quantile_up = getMeanAbsDeviationQuantiles(alpha, length)
 
-    mean_ab_deviation = mapreduce((x) -> abs(x - average), +, values)/length
+    mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values)/length
 
     @interval(mean_abs_deviation/quantile_down, mean_abs_deviation/quantile_up)
 end
 
-function byPointVariance(variance, length)
+function byPointVariance(variance, alpha, length)
     gamma_down, gamma_up = getGammas(alpha)
     quantile_down = getChiSquareQuantile(gamma_down, length)
     quantile_up = getChiSquareQuantile(gamma_up, length)
 
-    fixed_variance = variance * (1 + 0.254) / (length - 1)
+    fixed_variance = sqrt(variance) * (1 + 0.254 / (length - 1))
     term = sqrt(length - 1) * fixed_variance
 
     @interval(sqrt(quantile_down) * term, sqrt(quantile_up) * term)
@@ -38,7 +38,7 @@ end
 
 function getChiSquareQuantile(value, length)
     d = Chisq(length - 1)
-    quatile(d, value)
+    quantile(d, value)
 end
 
 function getMeanAbsDeviationQuantiles(alpha, length)
@@ -66,7 +66,7 @@ function getMeanAbsDeviationQuantiles(alpha, length)
         9 1.175 0.396;
         10 1.156 0.417;
         ]
-    elseif alpha == 0.975
+    elseif alpha == 0.99
         knots = [
         2 1.985 0.004;
         3 1.703 0.073;
@@ -82,6 +82,9 @@ function getMeanAbsDeviationQuantiles(alpha, length)
         error("Value=$alpha is not allowed")
     end
     x_knots = knots[:, 1]
+    if length > last(x_knots)
+        error("Error $length too high")
+    end
 
     y_down_knots = knots[:, 2]
     down_itp = Spline1D(x_knots, y_down_knots, k=1, bc="extrapolate")
