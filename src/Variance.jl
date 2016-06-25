@@ -27,9 +27,9 @@ function byPointVariance(variance, alpha, length)
     quantile_up = getChiSquareQuantile(gamma_up, length)
 
     fixed_variance = sqrt(variance) * (1 + 0.254 / (length - 1))
-    term = sqrt(length - 1) * fixed_variance
+    term = (length - 1) * fixed_variance*fixed_variance
 
-    @interval(sqrt(quantile_down) * term, sqrt(quantile_up) * term)
+    @interval(term / quantile_down, term / quantile_up)
 end
 
 function getGammas(alpha)
