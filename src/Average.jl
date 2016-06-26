@@ -54,7 +54,7 @@ function getMediamOfSorted(values, length)
 end
 
 function getInterQuartileQuintile(value, length)
-    knots = [
+    const knots = [
     11 0.470 0.623 0.876
     15 0.400 0.514 0.678
     19 0.354 0.448 0.573
@@ -85,7 +85,7 @@ function getMeanAbsDeviationQuantile(value, length)
     if value != 0.95 && value != 0.975
         error("Value=$value is not allowed")
     end
-    knots = [
+    const knots = [
     2 12.71;
     3 3.45;
     4 2.16;

@@ -43,7 +43,7 @@ end
 
 function getMeanAbsDeviationQuantiles(confidence_probability, length)
     if confidence_probability == 0.90
-        knots = [
+        const knots = [
         2 1.386 0.044;
         3 1.276 0.166;
         4 1.224 0.254;
@@ -55,7 +55,7 @@ function getMeanAbsDeviationQuantiles(confidence_probability, length)
         10 1.086 0.464;
         ]
     elseif confidence_probability == 0.95
-        knots = [
+        const knots = [
         2 1.585 0.022;
         3 1.417 0.116;
         4 1.344 0.199;
@@ -67,7 +67,7 @@ function getMeanAbsDeviationQuantiles(confidence_probability, length)
         10 1.156 0.417;
         ]
     elseif confidence_probability == 0.99
-        knots = [
+        const knots = [
         2 1.985 0.004;
         3 1.703 0.073;
         4 1.590 0.145;
