@@ -1,0 +1,8 @@
+language: julia
+julia:
+  - release
+  - nightly
+  - 0.4
+
+before_install:
+  - sudo apt-get install gfortran

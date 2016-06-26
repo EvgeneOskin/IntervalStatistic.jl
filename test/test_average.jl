@@ -5,7 +5,7 @@ using ValidatedNumerics;
 using IntervalStatistic;
 using Distributions;
 
-srand(1)
+srand(10)
 
 facts("estimate average By known Variance standard (0, 1) distribution") do
     d = Normal()
