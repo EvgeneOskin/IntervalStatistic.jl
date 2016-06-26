@@ -3,41 +3,41 @@ using ValidatedNumerics;
 using Distributions;
 using Dierckx;
 
-function byKnownVariance(average, variance, alpha, length)
-    gamma = getGamma(alpha)
-    quantile_gamma = normalQuantile(gamma)
+function byKnownVariance(average, variance, confidence_probability, length)
+    interval_confidence = getIntervaConfidenceProbability(confidence_probability)
+    quantile_gamma = normalQuantile(interval_confidence)
     delta = quantile_gamma * sqrt(variance) / sqrt(length)
     average + @interval(-delta, delta)
 end
 
-function byUnknownVariance(average, values, alpha, length)
-    gamma = getGamma(alpha)
+function byUnknownVariance(average, values, confidence_probability, length)
+    interval_confidence = getIntervaConfidenceProbability(confidence_probability)
     variance = mapreduce((x) -> (x - average)^2, +, values) / (length - 1)
-    quantile_gamma = studentQuatile(gamma, length - 1)
+    quantile_gamma = studentQuatile(interval_confidence, length - 1)
     delta = quantile_gamma * sqrt(variance) / sqrt(length)
     average + @interval(-delta, delta)
 end
 
-function byMeanAbsDeviation(average, values, alpha, length)
-    gamma = getGamma(alpha)
+function byMeanAbsDeviation(average, values, confidence_probability, length)
+    interval_confidence = getIntervaConfidenceProbability(confidence_probability)
     mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values) / length
-    quantile_gamma = getMeanAbsDeviationQuantile(gamma, length)
+    quantile_gamma = getMeanAbsDeviationQuantile(interval_confidence, length)
     delta = mean_abs_deviation * quantile_gamma
     average + @interval(-delta, delta)
 end
 
-function byInterQuartileWidth(values, alpha, length)
-    gamma = getGamma(alpha)
+function byInterQuartileWidth(values, confidence_probability, length)
+    interval_confidence = getIntervaConfidenceProbability(confidence_probability)
     ordered_values = sort(values)
     interquartile_width = getInterQuartileWidth(ordered_values, length)
-    interquertile_quitile = getInterQuartileQuintile(gamma, length)
+    interquertile_quitile = getInterQuartileQuintile(interval_confidence, length)
     mediam = getMediamOfSorted(ordered_values, length)
     delta = interquartile_width * interquertile_quitile
     mediam + @interval(-delta, delta)
 end
 
-function getGamma(alpha)
-    (1.0 + alpha) * 0.5
+function getIntervaConfidenceProbability(confidence_probability)
+    (1.0 + confidence_probability) * 0.5
 end
 
 function getInterQuartileWidth(values, length)

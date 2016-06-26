@@ -3,8 +3,8 @@ using ValidatedNumerics;
 using Distributions;
 using Dierckx;
 
-function byConfidenceProbability(average, values, alpha, length)
-    gamma_down, gamma_up = getGammas(alpha)
+function byConfidenceProbability(average, values, confidence_probability, length)
+    gamma_down, gamma_up = getGammas(confidence_probability)
     quantile_down = getChiSquareQuantile(gamma_down, length)
     quantile_up = getChiSquareQuantile(gamma_up, length)
 
@@ -13,16 +13,16 @@ function byConfidenceProbability(average, values, alpha, length)
     @interval(reduced/quantile_down, reduced/quantile_up)
 end
 
-function byMeanAbsoluteDeviation(average, values, alpha, length)
-    quantile_down, quantile_up = getMeanAbsDeviationQuantiles(alpha, length)
+function byMeanAbsoluteDeviation(average, values, confidence_probability, length)
+    quantile_down, quantile_up = getMeanAbsDeviationQuantiles(confidence_probability, length)
 
     mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values)/length
 
     @interval(mean_abs_deviation/quantile_down, mean_abs_deviation/quantile_up)
 end
 
-function byPointVariance(variance, alpha, length)
-    gamma_down, gamma_up = getGammas(alpha)
+function byPointVariance(variance, confidence_probability, length)
+    gamma_down, gamma_up = getGammas(confidence_probability)
     quantile_down = getChiSquareQuantile(gamma_down, length)
     quantile_up = getChiSquareQuantile(gamma_up, length)
 
@@ -32,8 +32,8 @@ function byPointVariance(variance, alpha, length)
     @interval(term / quantile_down, term / quantile_up)
 end
 
-function getGammas(alpha)
-    (1 + alpha) * 0.5, (1 - alpha) * 0.5
+function getGammas(confidence_probability)
+    (1 + confidence_probability) * 0.5, (1 - confidence_probability) * 0.5
 end
 
 function getChiSquareQuantile(value, length)
@@ -41,8 +41,8 @@ function getChiSquareQuantile(value, length)
     quantile(d, value)
 end
 
-function getMeanAbsDeviationQuantiles(alpha, length)
-    if alpha == 0.90
+function getMeanAbsDeviationQuantiles(confidence_probability, length)
+    if confidence_probability == 0.90
         knots = [
         2 1.386 0.044;
         3 1.276 0.166;
@@ -54,7 +54,7 @@ function getMeanAbsDeviationQuantiles(alpha, length)
         9 1.100 0.445;
         10 1.086 0.464;
         ]
-    elseif alpha == 0.95
+    elseif confidence_probability == 0.95
         knots = [
         2 1.585 0.022;
         3 1.417 0.116;
@@ -66,7 +66,7 @@ function getMeanAbsDeviationQuantiles(alpha, length)
         9 1.175 0.396;
         10 1.156 0.417;
         ]
-    elseif alpha == 0.99
+    elseif confidence_probability == 0.99
         knots = [
         2 1.985 0.004;
         3 1.703 0.073;
@@ -79,7 +79,7 @@ function getMeanAbsDeviationQuantiles(alpha, length)
         10 1.299 0.366;
         ]
     else
-        error("Value=$alpha is not allowed")
+        error("Value=$confidence_probability is not allowed")
     end
     x_knots = knots[:, 1]
     if length > last(x_knots)
