@@ -5,6 +5,8 @@ using ValidatedNumerics;
 using IntervalStatistic;
 using Distributions;
 
+srand(10)
+
 facts("estimate variance By confidence probability standard (0, 1) distribution") do
     d = Normal()
     length = 100

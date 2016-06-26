@@ -18,7 +18,7 @@ function byMeanAbsoluteDeviation(average, values, confidence_probability, length
 
     mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values)/length
 
-    @interval(mean_abs_deviation/quantile_down, mean_abs_deviation/quantile_up)
+    @interval(mean_abs_deviation/quantile_down, mean_abs_deviation/quantile_up)^2
 end
 
 function byPointVariance(variance, confidence_probability, length)
@@ -26,8 +26,8 @@ function byPointVariance(variance, confidence_probability, length)
     quantile_down = getChiSquareQuantile(gamma_down, length)
     quantile_up = getChiSquareQuantile(gamma_up, length)
 
-    fixed_variance = sqrt(variance) * (1 + 0.254 / (length - 1))
-    term = (length - 1) * fixed_variance*fixed_variance
+    fixed_variance = variance * (1 + 0.254 / (length - 1))^2
+    term = (length - 1) * fixed_variance
 
     @interval(term / quantile_down, term / quantile_up)
 end
