@@ -1,33 +1,63 @@
 module Average
-using ValidatedNumerics;
-using Distributions;
-using Dierckx;
+using ValidatedNumerics
+using Distributions
+using Dierckx
 
-function byKnownVariance(average, variance, confidence_probability, length)
-    interval_confidence = getIntervaConfidenceProbability(confidence_probability)
-    quantile_gamma = normalQuantile(interval_confidence)
-    delta = quantile_gamma * sqrt(variance) / sqrt(length)
+abstract BaseEstimator
+
+function estimate(values, method :: BaseEstimator)
+    error("Unsupported method")
+end
+
+immutable byKnownVariance <: BaseEstimator
+    confidence_probability :: Real
+    variance :: Real
+end
+
+function estimate(values, method::byKnownVariance)
+    interval_confidence = getIntervalConfidenceProbability(method.confidence_probability)
+    average = mean(values)
+    length = size(values, 1)
+    quantile = normalQuantile(interval_confidence)
+    delta = quantile * sqrt(method.variance) / sqrt(length)
     average + @interval(-delta, delta)
 end
 
-function byUnknownVariance(average, values, confidence_probability, length)
-    interval_confidence = getIntervaConfidenceProbability(confidence_probability)
+immutable byUnknownVariance <: BaseEstimator
+    confidence_probability :: Real
+end
+
+function estimate(values, method::byUnknownVariance)
+    average = mean(values)
+    length = size(values, 1)
+    interval_confidence = getIntervalConfidenceProbability(method.confidence_probability)
     variance = mapreduce((x) -> (x - average)^2, +, values) / (length - 1)
-    quantile_gamma = studentQuatile(interval_confidence, length - 1)
-    delta = quantile_gamma * sqrt(variance) / sqrt(length)
+    quantile = studentQuatile(interval_confidence, length - 1)
+    delta = quantile * sqrt(variance) / sqrt(length)
     average + @interval(-delta, delta)
 end
 
-function byMeanAbsDeviation(average, values, confidence_probability, length)
-    interval_confidence = getIntervaConfidenceProbability(confidence_probability)
+immutable byMeanAbsDeviation <: BaseEstimator
+    confidence_probability :: Real
+end
+
+function estimate(values, method :: byMeanAbsDeviation)
+    average = mean(values)
+    length = size(values, 1)
+    interval_confidence = getIntervalConfidenceProbability(method.confidence_probability)
     mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values) / length
-    quantile_gamma = getMeanAbsDeviationQuantile(interval_confidence, length)
-    delta = mean_abs_deviation * quantile_gamma
+    quantile = getMeanAbsDeviationQuantile(interval_confidence, length)
+    delta = mean_abs_deviation * quantile
     average + @interval(-delta, delta)
 end
 
-function byInterQuartileWidth(values, confidence_probability, length)
-    interval_confidence = getIntervaConfidenceProbability(confidence_probability)
+immutable byInterQuartileWidth <: BaseEstimator
+    confidence_probability :: Real
+end
+
+function estimate(values, method :: byInterQuartileWidth)
+    interval_confidence = getIntervalConfidenceProbability(method.confidence_probability)
+    length = size(values, 1)
     ordered_values = sort(values)
     interquartile_width = getInterQuartileWidth(ordered_values, length)
     interquertile_quitile = getInterQuartileQuintile(interval_confidence, length)
@@ -36,11 +66,12 @@ function byInterQuartileWidth(values, confidence_probability, length)
     mediam + @interval(-delta, delta)
 end
 
-function getIntervaConfidenceProbability(confidence_probability)
+function getIntervalConfidenceProbability(confidence_probability)
     (1.0 + confidence_probability) * 0.5
 end
 
 function getInterQuartileWidth(values, length)
+    # TODO this can be replaced with StatsBase.iqr
     quartile_index = div((length + 1), 4)
     values[3*quartile_index] - values[quartile_index]
 end
@@ -121,4 +152,5 @@ function normalQuantile(value)
     d = Normal()
     quantile(d, value)
 end
+
 end

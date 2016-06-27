@@ -3,8 +3,20 @@ using ValidatedNumerics;
 using Distributions;
 using Dierckx;
 
-function byConfidenceProbability(average, values, confidence_probability, length)
-    gamma_down, gamma_up = getGammas(confidence_probability)
+abstract BaseEstimator
+
+function estimate(values, method::BaseEstimator)
+    error("Unsupported method $method")
+end
+
+immutable byConfidenceProbability <: BaseEstimator
+    confidence_probability :: Real
+end
+
+function estimate(values, method :: byConfidenceProbability)
+    average = mean(values)
+    length = size(values, 1)
+    gamma_down, gamma_up = getGammas(method.confidence_probability)
     quantile_down = getChiSquareQuantile(gamma_down, length)
     quantile_up = getChiSquareQuantile(gamma_up, length)
 
@@ -13,20 +25,32 @@ function byConfidenceProbability(average, values, confidence_probability, length
     @interval(reduced/quantile_down, reduced/quantile_up)
 end
 
-function byMeanAbsoluteDeviation(average, values, confidence_probability, length)
-    quantile_down, quantile_up = getMeanAbsDeviationQuantiles(confidence_probability, length)
+immutable byMeanAbsoluteDeviation <: BaseEstimator
+    confidence_probability :: Real
+end
+
+function estimate(values, method :: byMeanAbsoluteDeviation)
+    average = mean(values)
+    length = size(values, 1)
+    quantile_down, quantile_up = getMeanAbsDeviationQuantiles(method.confidence_probability, length)
 
     mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values)/length
 
     @interval(mean_abs_deviation/quantile_down, mean_abs_deviation/quantile_up)^2
 end
 
-function byPointVariance(variance, confidence_probability, length)
-    gamma_down, gamma_up = getGammas(confidence_probability)
+immutable byPointVariance <: BaseEstimator
+    confidence_probability :: Real
+    variance :: Real
+end
+
+function estimate(values, method::byPointVariance)
+    length = size(values, 1)
+    gamma_down, gamma_up = getGammas(method.confidence_probability)
     quantile_down = getChiSquareQuantile(gamma_down, length)
     quantile_up = getChiSquareQuantile(gamma_up, length)
 
-    fixed_variance = variance * (1 + 0.254 / (length - 1))^2
+    fixed_variance = method.variance * (1 + 0.254 / (length - 1))^2
     term = (length - 1) * fixed_variance
 
     @interval(term / quantile_down, term / quantile_up)
