@@ -1,10 +1,10 @@
 module IntervalStatistic
 
-include("Average.jl")
+include("Mean.jl")
 include("Variance.jl")
 
-function mean(values :: Vector, method :: Average.BaseEstimator)
-    Average.estimate(values, method)
+function mean(values :: Vector, method :: Mean.BaseEstimator)
+    Mean.estimate(values, method)
 end
 
 function var(values :: Vector, method :: Variance.BaseEstimator)

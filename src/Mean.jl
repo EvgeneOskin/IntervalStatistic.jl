@@ -1,4 +1,4 @@
-module Average
+module Mean
 using ValidatedNumerics
 using Distributions
 using Dierckx
