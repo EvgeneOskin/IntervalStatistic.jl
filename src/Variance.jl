@@ -15,10 +15,10 @@ end
 
 function estimate(values, method :: byConfidenceProbability)
     average = mean(values)
-    length = size(values, 1)
+    count = length(values)
     gamma_down, gamma_up = getGammas(method.confidence_probability)
-    quantile_down = getChiSquareQuantile(gamma_down, length)
-    quantile_up = getChiSquareQuantile(gamma_up, length)
+    quantile_down = getChiSquareQuantile(gamma_down, count)
+    quantile_up = getChiSquareQuantile(gamma_up, count)
 
     reduced = mapreduce((x) -> (x - average)^2, +, values)
 
@@ -31,10 +31,10 @@ end
 
 function estimate(values, method :: byMeanAbsoluteDeviation)
     average = mean(values)
-    length = size(values, 1)
-    quantile_down, quantile_up = getMeanAbsDeviationQuantiles(method.confidence_probability, length)
+    count = length(values)
+    quantile_down, quantile_up = getMeanAbsDeviationQuantiles(method.confidence_probability, count)
 
-    mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values)/length
+    mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values)/count
 
     @interval(mean_abs_deviation/quantile_down, mean_abs_deviation/quantile_up)^2
 end
@@ -45,13 +45,13 @@ immutable byPointVariance <: BaseEstimator
 end
 
 function estimate(values, method::byPointVariance)
-    length = size(values, 1)
+    count = length(values)
     gamma_down, gamma_up = getGammas(method.confidence_probability)
-    quantile_down = getChiSquareQuantile(gamma_down, length)
-    quantile_up = getChiSquareQuantile(gamma_up, length)
+    quantile_down = getChiSquareQuantile(gamma_down, count)
+    quantile_up = getChiSquareQuantile(gamma_up, count)
 
-    fixed_variance = method.variance * (1 + 0.254 / (length - 1))^2
-    term = (length - 1) * fixed_variance
+    fixed_variance = method.variance * (1 + 0.254 / (count - 1))^2
+    term = (count - 1) * fixed_variance
 
     @interval(term / quantile_down, term / quantile_up)
 end
@@ -60,12 +60,12 @@ function getGammas(confidence_probability)
     (1 + confidence_probability) * 0.5, (1 - confidence_probability) * 0.5
 end
 
-function getChiSquareQuantile(value, length)
-    d = Chisq(length - 1)
+function getChiSquareQuantile(value, count)
+    d = Chisq(count - 1)
     quantile(d, value)
 end
 
-function getMeanAbsDeviationQuantiles(confidence_probability, length)
+function getMeanAbsDeviationQuantiles(confidence_probability, count)
     if confidence_probability == 0.90
         const knots = [
         2 1.386 0.044;
@@ -106,8 +106,8 @@ function getMeanAbsDeviationQuantiles(confidence_probability, length)
         error("Value=$confidence_probability is not allowed")
     end
     x_knots = knots[:, 1]
-    if length > last(x_knots)
-        error("Error $length too high")
+    if count > last(x_knots)
+        error("Error $count too high")
     end
 
     y_down_knots = knots[:, 2]
@@ -115,7 +115,7 @@ function getMeanAbsDeviationQuantiles(confidence_probability, length)
 
     y_up_knots = knots[:, 3]
     up_itp = Spline1D(x_knots, y_up_knots, k=1, bc="extrapolate")
-    evaluate(down_itp, length), evaluate(up_itp, length)
+    evaluate(down_itp, count), evaluate(up_itp, count)
 end
 
 end

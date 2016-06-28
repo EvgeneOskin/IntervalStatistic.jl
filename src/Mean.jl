@@ -17,9 +17,9 @@ end
 function estimate(values, method::byKnownVariance)
     interval_confidence = getIntervalConfidenceProbability(method.confidence_probability)
     average = mean(values)
-    length = size(values, 1)
+    count = length(values)
     quantile = normalQuantile(interval_confidence)
-    delta = quantile * sqrt(method.variance) / sqrt(length)
+    delta = quantile * sqrt(method.variance) / sqrt(count)
     average + @interval(-delta, delta)
 end
 
@@ -29,11 +29,11 @@ end
 
 function estimate(values, method::byUnknownVariance)
     average = mean(values)
-    length = size(values, 1)
+    count = length(values)
     interval_confidence = getIntervalConfidenceProbability(method.confidence_probability)
-    variance = mapreduce((x) -> (x - average)^2, +, values) / (length - 1)
-    quantile = studentQuatile(interval_confidence, length - 1)
-    delta = quantile * sqrt(variance) / sqrt(length)
+    variance = mapreduce((x) -> (x - average)^2, +, values) / (count - 1)
+    quantile = studentQuatile(interval_confidence, count - 1)
+    delta = quantile * sqrt(variance) / sqrt(count)
     average + @interval(-delta, delta)
 end
 
@@ -43,10 +43,10 @@ end
 
 function estimate(values, method :: byMeanAbsDeviation)
     average = mean(values)
-    length = size(values, 1)
+    count = length(values)
     interval_confidence = getIntervalConfidenceProbability(method.confidence_probability)
-    mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values) / length
-    quantile = getMeanAbsDeviationQuantile(interval_confidence, length)
+    mean_abs_deviation = mapreduce((x) -> abs(x - average), +, values) / count
+    quantile = getMeanAbsDeviationQuantile(interval_confidence, count)
     delta = mean_abs_deviation * quantile
     average + @interval(-delta, delta)
 end
@@ -57,11 +57,11 @@ end
 
 function estimate(values, method :: byInterQuartileWidth)
     interval_confidence = getIntervalConfidenceProbability(method.confidence_probability)
-    length = size(values, 1)
+    count = length(values)
     ordered_values = sort(values)
-    interquartile_width = getInterQuartileWidth(ordered_values, length)
-    interquertile_quitile = getInterQuartileQuintile(interval_confidence, length)
-    mediam = getMediamOfSorted(ordered_values, length)
+    interquartile_width = getInterQuartileWidth(ordered_values, count)
+    interquertile_quitile = getInterQuartileQuintile(interval_confidence, count)
+    mediam = getMediamOfSorted(ordered_values, count)
     delta = interquartile_width * interquertile_quitile
     mediam + @interval(-delta, delta)
 end
@@ -70,21 +70,21 @@ function getIntervalConfidenceProbability(confidence_probability)
     (1.0 + confidence_probability) * 0.5
 end
 
-function getInterQuartileWidth(values, length)
+function getInterQuartileWidth(values, count)
     # TODO this can be replaced with StatsBase.iqr
-    quartile_index = div((length + 1), 4)
+    quartile_index = div((count + 1), 4)
     values[3*quartile_index] - values[quartile_index]
 end
 
-function getMediamOfSorted(values, length)
-    if isodd(length)
-        0.5*(values[div(length, 2)] + values[div(length, 2) + 1])
+function getMediamOfSorted(values, count)
+    if isodd(count)
+        0.5*(values[div(count, 2)] + values[div(count, 2) + 1])
     else
-        values[div((length + 1), 2)]
+        values[div((count + 1), 2)]
     end
 end
 
-function getInterQuartileQuintile(value, length)
+function getInterQuartileQuintile(value, count)
     const knots = [
     11 0.470 0.623 0.876
     15 0.400 0.514 0.678
@@ -109,10 +109,10 @@ function getInterQuartileQuintile(value, length)
         error("Value=$value is not allowed")
     end
     itp = Spline1D(x_knots, y_knots, k=1, bc="extrapolate")
-    evaluate(itp, length)
+    evaluate(itp, count)
 end
 
-function getMeanAbsDeviationQuantile(value, length)
+function getMeanAbsDeviationQuantile(value, count)
     if value != 0.95 && value != 0.975
         error("Value=$value is not allowed")
     end
@@ -140,7 +140,7 @@ function getMeanAbsDeviationQuantile(value, length)
     x_knots = knots[:, 1]
     y_knots = knots[:, 2]
     itp = Spline1D(x_knots, y_knots, k=1, bc="extrapolate")
-    evaluate(itp, length)
+    evaluate(itp, count)
 end
 
 function studentQuatile(value, freedomDegreeNumber)
