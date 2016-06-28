@@ -1,7 +1,6 @@
 module Check
 using StatsBase
 using Distributions
-using Debug
 
 abstract BaseCheck
 function isDistribution(values :: Vector, check::BaseCheck)
@@ -15,15 +14,15 @@ immutable ChiSquareCheck <: BaseCheck
     error_probability :: Real
     calculateCoefficient :: Function
 end
+
 function SimpleChiSquareCheck(error_probability)
-    ChiSquareCheck(error_probability, (n)->5)
+    ChiSquareCheck(error_probability, (n) -> Int(round(n / 5)))
 end
 
-@debug function isDistribution(values :: Vector, check :: ChiSquareCheck)
+function isDistribution(values :: Vector, check :: ChiSquareCheck)
     values_count = size(values, 1)
-    intervals = generateIntervals(values, check)
-    hist = fit(Histogram, values, intervals)
-    intervals_count = size(intervals, 1)
+    intervals_count = check.calculateCoefficient(values_count)
+    hist = fit(Histogram, values, nbins=intervals_count)
     n_probability = values_count/intervals_count
 
     chi_square = n_probability*mapreduce(
@@ -40,14 +39,6 @@ end
 function getChiSquareQuantile(value, freedom_degree_number)
     d = Chisq(freedom_degree_number)
     quantile(d, value)
-end
-
-function generateIntervals(values :: Vector, method :: ChiSquareCheck)
-    count = size(values, 1)
-    interval_count = count/method.calculateCoefficient(count)
-    max_values, min_value = maximum(values), minimum(values)
-    step = (max_values - min_value) / interval_count
-    min_value:step:(max_values + step*0.01)
 end
 
 end
