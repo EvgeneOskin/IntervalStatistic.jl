@@ -34,6 +34,12 @@ facts("estimate average of standard (0, 1) distribution") do
         @fact result --> in_3_sigma_interval(mu, sigma)
     end
 
+    context("by standard error") do
+        result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byStandardError())
+        println(result)
+        @fact result --> in_3_sigma_interval(mu, sigma)
+    end
+
     context("by mean abs deviation") do
         result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byMeanAbsDeviation(0.95))
         println(result)
@@ -56,6 +62,12 @@ facts("estimate average of normal mu=3, sigma=0.1 distribution") do
 
     context("by interquartile width") do
         result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byInterQuartileWidth(0.95))
+        println(result)
+        @fact result --> in_3_sigma_interval(mu, sigma)
+    end
+
+    context("by standard error") do
+        result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byStandardError())
         println(result)
         @fact result --> in_3_sigma_interval(mu, sigma)
     end
