@@ -1,4 +1,4 @@
-module AverageTests
+module MeanTests
 using Base.Test;
 using FactCheck;
 using ValidatedNumerics;
@@ -14,60 +14,60 @@ facts("estimate average of standard (0, 1) distribution") do
     length = 100
     values = rand(d, length)
     mu, sigma = params(d)
-    average = reduce(+, values) / length
+    average = mean(values)
 
     context("by known variance") do
-        result = IntervalStatistic.Average.byKnownVariance(average, sigma*sigma, 0.95, length)
+        result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byKnownVariance(0.95, sigma*sigma))
         println(result)
         @fact result --> in_3_sigma_interval(mu, sigma)
     end
 
     context("by interquartile width") do
-        result = IntervalStatistic.Average.byInterQuartileWidth(values, 0.95, length)
+        result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byInterQuartileWidth(0.95))
         println(result)
         @fact result --> in_3_sigma_interval(mu, sigma)
     end
 
     context("by unknown variance") do
-        result = IntervalStatistic.Average.byUnknownVariance(average, values, 0.95, length)
+        result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byUnknownVariance(0.95))
         println(result)
         @fact result --> in_3_sigma_interval(mu, sigma)
     end
 
     context("by mean abs deviation") do
-        result = IntervalStatistic.Average.byMeanAbsDeviation(average, values, 0.95, length)
+        result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byMeanAbsDeviation(0.95))
         println(result)
         @fact result --> in_3_sigma_interval(mu, sigma)
     end
 end
 
-facts("estimate average of standard (0, 1) distribution") do
+facts("estimate average of normal mu=3, sigma=0.1 distribution") do
     d = Normal(3, 0.1)
     length = 100
     values = rand(d, length)
     mu, sigma = params(d)
-    average = reduce(+, values) / length
+    average = mean(values)
 
     context("by known variance") do
-        result = IntervalStatistic.Average.byKnownVariance(average, sigma*sigma, 0.95, length)
+        result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byKnownVariance(0.95, sigma*sigma))
         println(result)
         @fact result --> in_3_sigma_interval(mu, sigma)
     end
 
     context("by interquartile width") do
-        result = IntervalStatistic.Average.byInterQuartileWidth(values, 0.95, length)
+        result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byInterQuartileWidth(0.95))
         println(result)
         @fact result --> in_3_sigma_interval(mu, sigma)
     end
 
     context("by unknown variance") do
-        result = IntervalStatistic.Average.byUnknownVariance(average, values, 0.95, length)
+        result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byUnknownVariance(0.95))
         println(result)
         @fact result --> in_3_sigma_interval(mu, sigma)
     end
 
     context("by mean abs deviation") do
-        result = IntervalStatistic.Average.byMeanAbsDeviation(average, values, 0.95, length)
+        result = IntervalStatistic.mean(values, IntervalStatistic.Mean.byMeanAbsDeviation(0.95))
         println(result)
         @fact result --> in_3_sigma_interval(mu, sigma)
     end
