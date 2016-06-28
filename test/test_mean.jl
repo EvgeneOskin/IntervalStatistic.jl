@@ -41,7 +41,7 @@ facts("estimate average of standard (0, 1) distribution") do
     end
 end
 
-facts("estimate average of standard (0, 1) distribution") do
+facts("estimate average of normal mu=3, sigma=0.1 distribution") do
     d = Normal(3, 0.1)
     length = 100
     values = rand(d, length)
