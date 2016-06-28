@@ -2,6 +2,7 @@ module Mean
 using ValidatedNumerics
 using Distributions
 using Dierckx
+using StatsBase
 
 abstract BaseEstimator
 
@@ -20,6 +21,17 @@ function estimate(values, method::byKnownVariance)
     count = length(values)
     quantile = normalQuantile(interval_confidence)
     delta = quantile * sqrt(method.variance) / sqrt(count)
+    average + @interval(-delta, delta)
+end
+
+immutable byStandardError <: BaseEstimator
+end
+
+function estimate(values, method::byStandardError)
+    average, variance = mean_and_var(values)
+    count = length(values)
+    fixed_variance = variance*count/(count - 1)
+    delta = sqrt(fixed_variance/count)
     average + @interval(-delta, delta)
 end
 
