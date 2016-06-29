@@ -21,6 +21,42 @@ function SimpleChiSquareCheck(error_probability, distribution)
     ChiSquareCheck(error_probability, distribution, (n) -> round(Int, n / 5))
 end
 
+function LargeNChiSquareCheck(error_probability, distribution)
+    # Mann H.B., Wald A., On the choice of number of intervals in the applciation of the chi-square test – 1942
+    # Hollander M., Proshan F., Testing whether new is better than used – 1972
+    ChiSquareCheck(error_probability, distribution, (n) -> calculateIntervalCountForLargeN(n))
+end
+
+function DahiyaChiSquareCheck(error_probability, distribution)
+    # Dahiya R.C., Gurland J., How many classes in the Pearson chi-square test? – 1973
+    ChiSquareCheck(error_probability, distribution, (n) -> round(Int, 1 + 3.32*log10(n)))
+end
+
+
+function EadieChiSquareCheck(error_probability, distribution)
+    # Eadie W.T., Dryard D., James F.E., Roos M., Statistical methods in experimantal physics – American Elsevier Pub. Co, Geneva – 1971
+    ChiSquareCheck(error_probability, distribution, (n) -> calculateIntervalCountForEadie(n, 0.05, 2))
+end
+
+function calculateIntervalCountForLargeN(n)
+    if n >= 500
+        result = 4 * 0.75^0.2 * ( n -1 )^0.4
+        round(Int, result)
+    else
+        error("$n show be greater then or equal 500.")
+    end
+end
+
+function calculateIntervalCountForEadie(n, beta_error_probability, adjustable_parameter_b)
+    # adjustable_parameter_b could be in interval [2, 4]=#
+    reverse_beta_error_probability = 1 - beta_error_probability
+    d = Normal()
+    u_beta = quantile(d, beta_error_probability)
+    u_reverse_beta = quantile(d, reverse_beta_error_probability)
+    result = adjustable_parameter_b *( 2*((n - 1 ) / ( u_beta + u_reverse_beta ))^2 )^0.2
+    round(Int, result)
+end
+
 function isDistribution(values :: Vector, check :: ChiSquareCheck)
     values_count = length(values)
     intervals_count = check.calculateCoefficient(values_count)
