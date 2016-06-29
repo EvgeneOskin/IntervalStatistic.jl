@@ -57,10 +57,21 @@ function calculateIntervalCountForEadie(n, beta_error_probability, adjustable_pa
     round(Int, result)
 end
 
-function isDistribution(values :: Vector, check :: ChiSquareCheck)
+function counts_and_histogram(values :: Vector, check :: ChiSquareCheck)
     values_count = length(values)
     intervals_count = check.calculateCoefficient(values_count)
     hist = fit(Histogram, values, nbins=intervals_count)
+    (values_count, intervals_count, hist)
+end
+
+
+function histogram(values :: Vector, check :: ChiSquareCheck)
+    _, _, hist = counts_and_histogram(values, check)
+    hist
+end
+
+function isDistribution(values :: Vector, check :: ChiSquareCheck)
+    values_count, intervals_count, hist = counts_and_histogram(values, check)
     n_probability = values_count/intervals_count
 
     chi_square = mapreduce(
