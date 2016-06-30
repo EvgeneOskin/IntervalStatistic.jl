@@ -36,16 +36,6 @@ facts("estimate average of standard (0, 1) distribution") do
         println(result)
         @fact result --> true
     end
-    context("by chi_square check with Eadie k") do
-        mu = mean(values)
-        sigma = sqrt(var(values))
-        result = IntervalStatistic.isDistribution(
-            values,
-            IntervalStatistic.Check.EadieChiSquareCheck(0.05, Normal(mu, sigma))
-        )
-        println(result)
-        @fact result --> true
-    end
 end
 
 facts("estimate average of standard (0, 1) distribution with samlping=500") do
@@ -89,16 +79,6 @@ facts("estimate average of normal mu=3, sigma=0.1 distribution") do
         result = IntervalStatistic.isDistribution(
             values,
             IntervalStatistic.Check.DahiyaChiSquareCheck(0.05, Normal(mu, sigma))
-        )
-        println(result)
-        @fact result --> true
-    end
-    context("by chi_square check with Eadie k") do
-        mu = mean(values)
-        sigma = sqrt(var(values))
-        result = IntervalStatistic.isDistribution(
-            values,
-            IntervalStatistic.Check.EadieChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
         @fact result --> true

@@ -33,11 +33,6 @@ function DahiyaChiSquareCheck(error_probability, distribution)
 end
 
 
-function EadieChiSquareCheck(error_probability, distribution)
-    # Eadie W.T., Dryard D., James F.E., Roos M., Statistical methods in experimantal physics – American Elsevier Pub. Co, Geneva – 1971
-    ChiSquareCheck(error_probability, distribution, (n) -> calculateIntervalCountForEadie(n, 0.05, 2))
-end
-
 function calculateIntervalCountForLargeN(n)
     if n >= 500
         result = 4 * 0.75^0.2 * ( n -1 )^0.4
@@ -47,21 +42,12 @@ function calculateIntervalCountForLargeN(n)
     end
 end
 
-function calculateIntervalCountForEadie(n, beta_error_probability, adjustable_parameter_b)
-    # adjustable_parameter_b could be in interval [2, 4]=#
-    reverse_beta_error_probability = 1 - beta_error_probability
-    d = Normal()
-    u_beta = quantile(d, beta_error_probability)
-    u_reverse_beta = quantile(d, reverse_beta_error_probability)
-    result = adjustable_parameter_b *( 2*((n - 1 ) / ( u_beta + u_reverse_beta ))^2 )^0.2
-    round(Int, result)
-end
-
 function counts_and_histogram(values :: Vector, check :: ChiSquareCheck)
     values_count = length(values)
     intervals_count = check.calculateCoefficient(values_count)
     hist = fit(Histogram, values, nbins=intervals_count)
-    (values_count, intervals_count, hist)
+    intervals_and_weights = zip(edgesToIntervals(hist.edges[1]), hist.weights)
+    (values_count, intervals_count, intervals_and_weights)
 end
 
 
@@ -76,7 +62,7 @@ function isDistribution(values :: Vector, check :: ChiSquareCheck)
 
     chi_square = mapreduce(
         (x) -> chiSquareEstimate(x, values_count, check), +,
-        zip(edgesToIntervals(hist.edges[1]), hist.weights)
+        hist
     )
 
     freedom_degree_number = intervals_count - 1
