@@ -17,10 +17,6 @@ immutable ChiSquareCheck <: BaseCheck
     calculateCoefficient :: Function
 end
 
-function SimpleChiSquareCheck(error_probability, distribution)
-    ChiSquareCheck(error_probability, distribution, (n) -> round(Int, n / 5))
-end
-
 function LargeNChiSquareCheck(error_probability, distribution)
     # Mann H.B., Wald A., On the choice of number of intervals in the applciation of the chi-square test – 1942
     # Hollander M., Proshan F., Testing whether new is better than used – 1972

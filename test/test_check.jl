@@ -16,16 +16,6 @@ facts("estimate average of standard (0, 1) distribution") do
     mu, sigma = params(d)
     average = mean(values)
 
-    context("by simple chi_square check") do
-        mu = mean(values)
-        sigma = sqrt(var(values))
-        result = IntervalStatistic.isDistribution(
-            values,
-            IntervalStatistic.Check.SimpleChiSquareCheck(0.05, Normal(mu, sigma))
-        )
-        println(result)
-        @pending @fact result --> true
-    end
     context("by chi_square check with Dahiya k") do
         mu = mean(values)
         sigma = sqrt(var(values))
@@ -64,15 +54,6 @@ facts("estimate average of normal mu=3, sigma=0.1 distribution") do
     mu, sigma = params(d)
     average = mean(values)
 
-    context("by simple chi_square check") do
-        mu = mean(values)
-        sigma = sqrt(var(values))
-        result = IntervalStatistic.isDistribution(
-            values, IntervalStatistic.Check.SimpleChiSquareCheck(0.05, Normal(mu, sigma))
-        )
-        println(result)
-        @fact result --> true
-    end
     context("by chi_square check with Dahiya k") do
         mu = mean(values)
         sigma = sqrt(var(values))
