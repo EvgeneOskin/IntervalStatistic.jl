@@ -141,7 +141,6 @@ end
 
 function isDistribution(values :: Vector, check :: ChiSquareCheck)
     values_count, intervals_count, hist = countsAndHistogram(values, check)
-    n_probability = values_count/intervals_count
 
     chi_square = mapreduce(
         (x) -> chiSquareEstimate(x, values_count, check), +,
