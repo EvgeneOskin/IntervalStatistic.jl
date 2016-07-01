@@ -63,18 +63,18 @@ function estimate(values, method :: byMeanAbsDeviation)
     average + @interval(-delta, delta)
 end
 
-immutable byInterQuartileWidth <: BaseEstimator
+immutable byInterQuartileRange <: BaseEstimator
     confidence_probability :: Real
 end
 
-function estimate(values, method :: byInterQuartileWidth)
+function estimate(values, method :: byInterQuartileRange)
     interval_confidence = getIntervalConfidenceProbability(method.confidence_probability)
     count = length(values)
     ordered_values = sort(values)
-    interquartile_width = getInterQuartileWidth(ordered_values, count)
+    interquartile_range = getInterQuartileRange(ordered_values, count)
     interquertile_quitile = getInterQuartileQuintile(interval_confidence, count)
     mediam = getMediamOfSorted(ordered_values, count)
-    delta = interquartile_width * interquertile_quitile
+    delta = interquartile_range * interquertile_quitile
     mediam + @interval(-delta, delta)
 end
 
@@ -82,7 +82,7 @@ function getIntervalConfidenceProbability(confidence_probability)
     (1.0 + confidence_probability) * 0.5
 end
 
-function getInterQuartileWidth(values, count)
+function getInterQuartileRange(values, count)
     # TODO this can be replaced with StatsBase.iqr
     quartile_index = div((count + 1), 4)
     values[3*quartile_index] - values[quartile_index]
