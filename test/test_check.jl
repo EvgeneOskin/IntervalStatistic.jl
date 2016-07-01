@@ -22,7 +22,7 @@ facts("test goodness-fit of standard (0, 1) distribution with true distribution"
             IntervalStatistic.Check.SturgesChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Scott k") do
@@ -31,7 +31,7 @@ facts("test goodness-fit of standard (0, 1) distribution with true distribution"
             IntervalStatistic.Check.ScottChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Taylor k") do
@@ -40,7 +40,7 @@ facts("test goodness-fit of standard (0, 1) distribution with true distribution"
             IntervalStatistic.Check.TaylorChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with FreedmanDiaconis k") do
@@ -49,7 +49,7 @@ facts("test goodness-fit of standard (0, 1) distribution with true distribution"
             IntervalStatistic.Check.FreedmanDiaconisChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Doane k") do
@@ -58,7 +58,7 @@ facts("test goodness-fit of standard (0, 1) distribution with true distribution"
             IntervalStatistic.Check.DoaneChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Wichard k") do
@@ -67,7 +67,7 @@ facts("test goodness-fit of standard (0, 1) distribution with true distribution"
             IntervalStatistic.Check.WichardChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square modified for normal dist check with 10 bins") do
@@ -85,7 +85,7 @@ facts("test goodness-fit of standard (0, 1) distribution with true distribution"
             IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 11, mu, sigma)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 end
 
@@ -104,7 +104,7 @@ facts("test goodness-fit of standard (0, 1) distribution") do
             IntervalStatistic.Check.SturgesChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Scott k") do
@@ -115,7 +115,7 @@ facts("test goodness-fit of standard (0, 1) distribution") do
             IntervalStatistic.Check.ScottChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Taylor k") do
@@ -126,7 +126,7 @@ facts("test goodness-fit of standard (0, 1) distribution") do
             IntervalStatistic.Check.TaylorChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with FreedmanDiaconis k") do
@@ -137,7 +137,7 @@ facts("test goodness-fit of standard (0, 1) distribution") do
             IntervalStatistic.Check.FreedmanDiaconisChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Doane k") do
@@ -148,7 +148,7 @@ facts("test goodness-fit of standard (0, 1) distribution") do
             IntervalStatistic.Check.DoaneChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Wichard k") do
@@ -159,7 +159,7 @@ facts("test goodness-fit of standard (0, 1) distribution") do
             IntervalStatistic.Check.WichardChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square modified for normal dist check with 10 bins") do
@@ -170,7 +170,7 @@ facts("test goodness-fit of standard (0, 1) distribution") do
             IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 10, mu, sigma)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square modified for normal dist check with 11 bins") do
@@ -181,7 +181,7 @@ facts("test goodness-fit of standard (0, 1) distribution") do
             IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 11, mu, sigma)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 end
 
@@ -200,7 +200,7 @@ facts("test goodness-fit of standard (0, 1) distribution with samlping=500") do
             IntervalStatistic.Check.LargeNChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 end
 
@@ -219,7 +219,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution") do
             IntervalStatistic.Check.SturgesChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Scott k") do
@@ -230,7 +230,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution") do
             IntervalStatistic.Check.ScottChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Taylor k") do
@@ -241,7 +241,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution") do
             IntervalStatistic.Check.TaylorChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with FreedmanDiaconis k") do
@@ -252,7 +252,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution") do
             IntervalStatistic.Check.FreedmanDiaconisChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Doane k") do
@@ -263,7 +263,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution") do
             IntervalStatistic.Check.DoaneChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Wichard k") do
@@ -274,7 +274,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution") do
             IntervalStatistic.Check.WichardChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square modified for normal dist check with 10 bins") do
@@ -314,7 +314,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution with true distri
             IntervalStatistic.Check.SturgesChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Scott k") do
@@ -325,7 +325,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution with true distri
             IntervalStatistic.Check.ScottChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Taylor k") do
@@ -336,7 +336,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution with true distri
             IntervalStatistic.Check.TaylorChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with FreedmanDiaconis k") do
@@ -347,7 +347,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution with true distri
             IntervalStatistic.Check.FreedmanDiaconisChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Doane k") do
@@ -358,7 +358,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution with true distri
             IntervalStatistic.Check.DoaneChiSquareCheck(0.05, d)
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 
     context("by chi_square check with Wichard k") do
@@ -367,6 +367,28 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution with true distri
         result = IntervalStatistic.isDistribution(
             values,
             IntervalStatistic.Check.WichardChiSquareCheck(0.05, d)
+        )
+        println(result)
+        @pending @fact result --> true
+    end
+
+    context("by chi_square modified for normal dist check with 10 bins") do
+        mu = mean(values)
+        sigma = sqrt(var(values))
+        result = IntervalStatistic.isDistribution(
+            values,
+            IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 10, mu, sigma)
+        )
+        println(result)
+        @fact result --> true
+    end
+
+    context("by chi_square modified for normal dist check with 11 bins") do
+        mu = mean(values)
+        sigma = sqrt(var(values))
+        result = IntervalStatistic.isDistribution(
+            values,
+            IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 11, mu, sigma)
         )
         println(result)
         @fact result --> true
@@ -388,7 +410,7 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution with sampling=50
             IntervalStatistic.Check.LargeNChiSquareCheck(0.05, Normal(mu, sigma))
         )
         println(result)
-        @fact result --> true
+        @pending @fact result --> true
     end
 end
 
