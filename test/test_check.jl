@@ -62,11 +62,27 @@ facts("test goodness-fit of standard (0, 1) distribution with true distribution"
     end
 
     context("by chi_square check with Wichard k") do
-        mu = mean(values)
-        sigma = sqrt(var(values))
         result = IntervalStatistic.isDistribution(
             values,
             IntervalStatistic.Check.WichardChiSquareCheck(0.05, d)
+        )
+        println(result)
+        @fact result --> true
+    end
+
+    context("by chi_square modified for normal dist check with 10 bins") do
+        result = IntervalStatistic.isDistribution(
+            values,
+            IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 10, mu, sigma)
+        )
+        println(result)
+        @fact result --> true
+    end
+
+    context("by chi_square modified for normal dist check with 11 bins") do
+        result = IntervalStatistic.isDistribution(
+            values,
+            IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 11, mu, sigma)
         )
         println(result)
         @fact result --> true
@@ -141,6 +157,28 @@ facts("test goodness-fit of standard (0, 1) distribution") do
         result = IntervalStatistic.isDistribution(
             values,
             IntervalStatistic.Check.WichardChiSquareCheck(0.05, Normal(mu, sigma))
+        )
+        println(result)
+        @fact result --> true
+    end
+
+    context("by chi_square modified for normal dist check with 10 bins") do
+        mu = mean(values)
+        sigma = sqrt(var(values))
+        result = IntervalStatistic.isDistribution(
+            values,
+            IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 10, mu, sigma)
+        )
+        println(result)
+        @fact result --> true
+    end
+
+    context("by chi_square modified for normal dist check with 11 bins") do
+        mu = mean(values)
+        sigma = sqrt(var(values))
+        result = IntervalStatistic.isDistribution(
+            values,
+            IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 11, mu, sigma)
         )
         println(result)
         @fact result --> true
@@ -234,6 +272,28 @@ facts("test goodness-fit of normal mu=3, sigma=0.1 distribution") do
         result = IntervalStatistic.isDistribution(
             values,
             IntervalStatistic.Check.WichardChiSquareCheck(0.05, Normal(mu, sigma))
+        )
+        println(result)
+        @fact result --> true
+    end
+
+    context("by chi_square modified for normal dist check with 10 bins") do
+        mu = mean(values)
+        sigma = sqrt(var(values))
+        result = IntervalStatistic.isDistribution(
+            values,
+            IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 10, mu, sigma)
+        )
+        println(result)
+        @fact result --> true
+    end
+
+    context("by chi_square modified for normal dist check with 11 bins") do
+        mu = mean(values)
+        sigma = sqrt(var(values))
+        result = IntervalStatistic.isDistribution(
+            values,
+            IntervalStatistic.Check.ChiSquareNormalCheck(0.05, 11, mu, sigma)
         )
         println(result)
         @fact result --> true
